@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { X, Save } from "lucide-react"
+import { Download, FileJson, Image, Save, X } from "lucide-react"
 import dynamic from "next/dynamic"
 import "@excalidraw/excalidraw/index.css"
 
@@ -36,6 +36,7 @@ const ExcalidrawModal = React.memo<ExcalidrawModalProps>(({
   const [excalidrawAPI, setExcalidrawAPI] = useState<any>(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -100,6 +101,100 @@ const ExcalidrawModal = React.memo<ExcalidrawModalProps>(({
       setIsSaving(false)
     }
   }, [excalidrawAPI, onSave, onClose])
+
+  const downloadBlob = useCallback((blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }, [])
+
+  const getSceneForExport = useCallback(() => {
+    if (!excalidrawAPI) {
+      return {
+        elements: [],
+        appState: {
+          viewBackgroundColor: "#ffffff",
+          theme: "light",
+        },
+      }
+    }
+
+    const elements = excalidrawAPI.getSceneElements() || []
+    const appState = excalidrawAPI.getAppState()
+
+    return {
+      elements,
+      appState: {
+        viewBackgroundColor: appState?.viewBackgroundColor || "#ffffff",
+        theme: appState?.theme || "light",
+        exportBackground: true,
+        exportWithDarkMode: false,
+      },
+    }
+  }, [excalidrawAPI])
+
+  const handleDownloadPNG = useCallback(async () => {
+    try {
+      setIsExporting(true)
+      const { exportToCanvas } = await import("@excalidraw/excalidraw")
+      const { elements, appState } = getSceneForExport()
+      const canvas = await exportToCanvas({
+        elements,
+        appState: { ...appState, exportScale: 2 },
+        files: null,
+        maxWidthOrHeight: 4000,
+        exportPadding: 20,
+      })
+
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        downloadBlob(blob, "drawing.png")
+      }, "image/png")
+    } catch (error) {
+      console.error("Error exporting PNG:", error)
+    } finally {
+      setIsExporting(false)
+    }
+  }, [downloadBlob, getSceneForExport])
+
+  const handleDownloadSVG = useCallback(async () => {
+    try {
+      setIsExporting(true)
+      const { exportToSvg } = await import("@excalidraw/excalidraw")
+      const { elements, appState } = getSceneForExport()
+      const svg = await exportToSvg({
+        elements,
+        appState: { ...appState, exportScale: 1 },
+        files: null,
+        exportPadding: 20,
+      })
+
+      const svgString = new XMLSerializer().serializeToString(svg)
+      downloadBlob(new Blob([svgString], { type: "image/svg+xml" }), "drawing.svg")
+    } catch (error) {
+      console.error("Error exporting SVG:", error)
+    } finally {
+      setIsExporting(false)
+    }
+  }, [downloadBlob, getSceneForExport])
+
+  const handleDownloadJSON = useCallback(async () => {
+    try {
+      setIsExporting(true)
+      const { elements, appState } = getSceneForExport()
+      const payload = JSON.stringify({ elements, appState }, null, 2)
+      downloadBlob(new Blob([payload], { type: "application/json" }), "drawing.excalidraw.json")
+    } catch (error) {
+      console.error("Error exporting JSON:", error)
+    } finally {
+      setIsExporting(false)
+    }
+  }, [downloadBlob, getSceneForExport])
 
   const parseInitialData = useCallback(() => {
     if (!initialData) return undefined
@@ -184,8 +279,38 @@ const ExcalidrawModal = React.memo<ExcalidrawModalProps>(({
           <h2 className="text-xl font-medium text-slate-800">Drawing Canvas</h2>
           <div className="flex items-center space-x-2">
             <Button
+              onClick={handleDownloadPNG}
+              variant="ghost"
+              size="sm"
+              className="text-slate-500 hover:text-slate-900"
+              disabled={isSaving || isExporting}
+              title="Download PNG"
+            >
+              <Image className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={handleDownloadSVG}
+              variant="ghost"
+              size="sm"
+              className="text-slate-500 hover:text-slate-900"
+              disabled={isSaving || isExporting}
+              title="Download SVG"
+            >
+              <Download className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={handleDownloadJSON}
+              variant="ghost"
+              size="sm"
+              className="text-slate-500 hover:text-slate-900"
+              disabled={isSaving || isExporting}
+              title="Download JSON"
+            >
+              <FileJson className="w-4 h-4" />
+            </Button>
+            <Button
               onClick={handleSave}
-              disabled={isSaving}
+              disabled={isSaving || isExporting}
               className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl px-4 py-2 text-sm disabled:opacity-50"
             >
               {isSaving ? (
@@ -205,18 +330,15 @@ const ExcalidrawModal = React.memo<ExcalidrawModalProps>(({
               variant="ghost"
               size="sm"
               className="text-slate-400 hover:text-orange-600"
-              disabled={isSaving}
+              disabled={isSaving || isExporting}
             >
               <X className="w-5 h-5" />
             </Button>
           </div>
         </div>
-        
+
         {/* Excalidraw Container */}
-        <div 
-          className="w-full bg-white" 
-          style={{ height: "calc(90vh - 64px)" }}
-        >
+        <div className="w-full bg-white" style={{ height: "calc(90vh - 64px)" }}>
           {isLoaded && (
             <Excalidraw
               excalidrawAPI={handleExcalidrawAPI}
@@ -225,8 +347,8 @@ const ExcalidrawModal = React.memo<ExcalidrawModalProps>(({
                 canvasActions: {
                   saveToActiveFile: false,
                   loadScene: false,
-                  export: false,
-                  saveAsImage: false,
+                  export: { saveFileToDisk: true },
+                  saveAsImage: true,
                 },
                 tools: {
                   image: false,
