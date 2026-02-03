@@ -1,10 +1,13 @@
-/* Moved Google Fonts @import statements to the very top before Tailwind imports */
+/* Combined Global CSS - Notesio + Landingpage */
+
+/* Tailwind imports */
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Notesio color system (oklch) */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -38,13 +41,35 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  /* Updated font variables to use Google Fonts directly */
+  
+  /* Landingpage additional colors (HSL) */
+  --success: 99 100% 70%;
+  --success-foreground: 99 100% 70%;
+  
+  /* Font variables */
   --font-instrument-serif: "Instrument Serif", serif;
   --font-geist: "Geist", sans-serif;
   --font-nunito-sans: "Nunito Sans", sans-serif;
+
+  /* ============================================
+     HYBRID RESPONSIVE SYSTEM (from landingpage)
+     - Viewport units for spacing/positioning
+     - Fixed rem units for text (zoom-consistent)
+     ============================================ */
+  
+  /* Spacing variables - viewport-based for fluid layout */
+  --inset: min(2vw, 1.5rem);
+  --sides: 1rem;
+  --footer-safe-area: calc(var(--inset) * 2 + 1.5rem + theme('spacing.9'));
+  
+  /* Viewport-based spacing for positioning */
+  --spacing-edge: max(1.5rem, 3vw);
+  --spacing-edge-sm: max(1rem, 2vw);
+  --spacing-gap: max(1rem, 1.5vw);
 }
 
 .dark {
+  /* Notesio dark theme */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0 0);
@@ -79,6 +104,13 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Landingpage dark mode fallback */
+    --background: 240 2% 8%;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -104,6 +136,8 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -116,7 +150,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  /* Updated font mappings to use Google Fonts directly */
+  /* Font mappings */
   --font-serif: var(--font-instrument-serif);
   --font-sans: var(--font-nunito-sans);
   --font-mono: var(--font-geist);
@@ -131,29 +165,26 @@
   }
 }
 
-/* Added noise grain background for relaxing aesthetic */
-.noise-bg {
-  position: relative;
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+/* Shine animation from landingpage */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(200%);
+    opacity: 0;
+  }
 }
 
-.noise-bg::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.03;
-  z-index: -1;
-  background-image: radial-gradient(circle at 25% 25%, #000 1px, transparent 1px),
-    radial-gradient(circle at 75% 75%, #000 1px, transparent 1px),
-    radial-gradient(circle at 25% 75%, #000 0.5px, transparent 0.5px),
-    radial-gradient(circle at 75% 25%, #000 0.5px, transparent 0.5px);
-  background-size: 20px 20px, 20px 20px, 10px 10px, 10px 10px;
-  background-position: 0 0, 10px 10px, 5px 5px, 15px 15px;
-  animation: grain 8s steps(10) infinite;
-}
-
+/* Grain animation from notesio */
 @keyframes grain {
   0%,
   100% {
@@ -188,7 +219,34 @@
   }
 }
 
-/* Liquid glass effect utilities */
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Noise grain background from notesio */
+.noise-bg {
+  position: relative;
+}
+
+.noise-bg::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.03;
+  z-index: -1;
+  background-image: radial-gradient(circle at 25% 25%, #000 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, #000 1px, transparent 1px),
+    radial-gradient(circle at 25% 75%, #000 0.5px, transparent 0.5px),
+    radial-gradient(circle at 75% 25%, #000 0.5px, transparent 0.5px);
+  background-size: 20px 20px, 20px 20px, 10px 10px, 10px 10px;
+  background-position: 0 0, 10px 10px, 5px 5px, 15px 15px;
+  animation: grain 8s steps(10) infinite;
+}
+
+/* Liquid glass effect utilities from notesio */
 .glass-card {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(20px);
@@ -203,7 +261,7 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
-/* Thinner slash menu styling */
+/* Thinner slash menu styling from notesio */
 .slash-menu-thin {
   min-width: 280px;
   padding: 8px;
@@ -219,7 +277,7 @@
   margin-bottom: 0;
 }
 
-/* Enhanced preview mode styling */
+/* Enhanced preview mode styling from notesio */
 .preview-mode {
   font-family: var(--font-instrument-serif);
   font-style: italic;
@@ -237,7 +295,7 @@
   font-style: normal;
 }
 
-/* Custom transparent scrollbars */
+/* Custom transparent scrollbars from notesio */
 .scrollbar-thin {
   scrollbar-width: thin;
 }

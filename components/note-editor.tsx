@@ -28,10 +28,16 @@ interface NoteEditorProps {
   editingNote: Note | null
   newNote: { title: string; content: string; drawings?: string[] }
   previewContent: string | null
+  showSlashMenu: boolean
+  selectedCommandIndex: number
+  slashCommands: any[]
   onClose: () => void
   onSave: () => void
   onTitleChange: (title: string) => void
   onContentChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onCommandSelect: (command: any) => void
+  onSlashMenuNavigate: (direction: "up" | "down") => void
+  onSlashMenuClose: () => void
   onDrawingAdd?: (drawingData: string) => void
   onDrawingUpdate?: (index: number, drawingData: string) => void
   onDrawingDelete?: (index: number) => void
@@ -43,10 +49,16 @@ const NoteEditor = React.memo<NoteEditorProps>(
     editingNote,
     newNote,
     previewContent,
+    showSlashMenu,
+    selectedCommandIndex,
+    slashCommands,
     onClose,
     onSave,
     onTitleChange,
     onContentChange,
+    onCommandSelect,
+    onSlashMenuNavigate,
+    onSlashMenuClose,
     onDrawingAdd,
     onDrawingUpdate,
     onDrawingDelete,

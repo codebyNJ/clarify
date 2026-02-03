@@ -2,11 +2,14 @@
 
 import { RecoilRoot } from 'recoil';
 import { ReactNode } from 'react';
+import { AuthProvider } from '@/contexts/auth-context';
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <RecoilRoot>
-      {children}
+      <AuthProvider>
+        {children}
+      </AuthProvider>
     </RecoilRoot>
   );
 }
