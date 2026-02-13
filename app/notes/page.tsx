@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useCallback, useMemo, useTransition } from "react"
+import { useState, useCallback, useMemo, useTransition, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import NavigationTabs from "@/components/navigation-tabs"
@@ -11,11 +11,13 @@ import NoteCard from "@/components/note-card"
 import NoteEditor from "@/components/note-editor"
 import NoteViewer from "@/components/note-viewer"
 import ExcalidrawModal from "@/components/excalidraw-modal"
+import { DeleteConfirmationModal } from "@/components/delete-confirmation-modal"
 import ProtectedRoute from "@/components/protected-route"
 import { parseMarkdown } from "@/lib/markdown-parser"
 import { useDebounce } from "@/lib/hooks"
-import { useAuth } from "@/contexts/auth-context"
 import type { SlashCommand } from "@/lib/types"
+import NextLink from "next/link"
+import { useRouter } from "next/navigation"
 import {
   Plus,
   Search,
@@ -33,7 +35,6 @@ import {
   Calendar,
   Tag,
   PenTool,
-  LogOut,
 } from "lucide-react"
 
 interface Note {
@@ -51,10 +52,27 @@ interface Space {
 }
 
 export default function MyMindApp() {
-  const { user, logout } = useAuth()
+  const router = useRouter()
   const [notes, setNotes] = useState<Note[]>([])
   const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState<"flows" | "spaces" | "hmmm">("flows")
+  const [notesLayout, setNotesLayout] = useState<"2" | "3" | "4">("4")
+  const [activeTab, setActiveTab] = useState<"everything" | "spaces" | "serendipity">("everything")
+
+  // Load notes from localStorage on mount
+  useEffect(() => {
+    const savedNotes = localStorage.getItem("notes")
+    if (savedNotes) {
+      try {
+        const parsed = JSON.parse(savedNotes)
+        setNotes(parsed.map((note: any) => ({
+          ...note,
+          createdAt: new Date(note.createdAt),
+        })))
+      } catch (e) {
+        console.error("Failed to parse notes:", e)
+      }
+    }
+  }, [])
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -72,6 +90,9 @@ export default function MyMindApp() {
   const [currentDrawingData, setCurrentDrawingData] = useState<string>("")
   const [editingDrawingData, setEditingDrawingData] = useState<string>("")
   const [isEditingExistingDrawing, setIsEditingExistingDrawing] = useState(false)
+
+  // Delete confirmation modal state
+  const [noteToDelete, setNoteToDelete] = useState<number | null>(null)
 
   const [spaces] = useState<Space[]>([])
   const [isPending, startTransition] = useTransition()
@@ -206,11 +227,11 @@ export default function MyMindApp() {
 
   const getCurrentViewNotes = useMemo(() => {
     switch (activeTab) {
-      case "flows":
+      case "everything":
         return filteredNotes
       case "spaces":
         return []
-      case "hmmm":
+      case "serendipity":
         return []
       default:
         return filteredNotes
@@ -389,21 +410,29 @@ export default function MyMindApp() {
   }, [newNote, editingNote])
 
   const handleDeleteNote = useCallback((id: number) => {
-    startTransition(() => {
-      setNotes((prev) => prev.filter((note) => note.id !== id))
-    })
+    setNoteToDelete(id)
+  }, [])
+
+  const handleConfirmDelete = useCallback(() => {
+    if (noteToDelete) {
+      startTransition(() => {
+        setNotes((prev) => prev.filter((note) => note.id !== noteToDelete))
+      })
+      setNoteToDelete(null)
+    }
+  }, [noteToDelete])
+
+  const handleCancelDelete = useCallback(() => {
+    setNoteToDelete(null)
   }, [])
 
   const handleNoteClick = useCallback((note: Note) => {
-    setViewingNote(note)
-  }, [])
+    router.push(`/notes/edit/${note.id}`)
+  }, [router])
 
   const handleEditNote = useCallback((note: Note) => {
-    setEditingNote(note)
-    setNewNote({ title: note.title, content: note.content })
-    setViewingNote(null)
-    setIsModalOpen(true)
-  }, [])
+    router.push(`/notes/edit/${note.id}`)
+  }, [router])
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false)
@@ -420,201 +449,106 @@ export default function MyMindApp() {
     setNewNote((prev) => ({ ...prev, title }))
   }, [])
 
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("notes_layout")
+      if (saved === "2" || saved === "3" || saved === "4") {
+        setNotesLayout(saved)
+      }
+    } catch {
+      // ignore
+    }
+
+    const handler = (event: Event) => {
+      const custom = event as CustomEvent<{ layout?: unknown }>
+      const layout = custom.detail?.layout
+      if (layout === "2" || layout === "3" || layout === "4") {
+        setNotesLayout(layout)
+      }
+    }
+
+    window.addEventListener("notesio:layout", handler as EventListener)
+    return () => {
+      window.removeEventListener("notesio:layout", handler as EventListener)
+    }
+  }, [])
+
+  const notesGridClassName =
+    notesLayout === "2"
+      ? "grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-fr items-stretch"
+      : notesLayout === "3"
+        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr items-stretch"
+        : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-fr items-stretch"
+
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-white relative overflow-hidden">
-        <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
-        <div className="fixed inset-0 pointer-events-none">
-          <motion.div
-            animate={{
-              x: [0, 30, 0],
-              y: [0, -20, 0],
-            }}
-            transition={{
-              duration: 45,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-            className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-orange-300/6 to-amber-400/6 rounded-full blur-3xl will-change-transform"
-          />
-          <motion.div
-            animate={{
-              x: [0, -25, 0],
-              y: [0, 18, 0],
-            }}
-            transition={{
-              duration: 55,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-            className="absolute top-1/2 right-32 w-80 h-80 bg-gradient-to-br from-amber-400/8 to-orange-500/8 rounded-full blur-3xl will-change-transform"
-          />
-          <motion.div
-            animate={{
-              x: [0, 20, 0],
-              y: [0, -15, 0],
-            }}
-            transition={{
-              duration: 65,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-            className="absolute bottom-32 left-1/3 w-72 h-72 bg-gradient-to-br from-yellow-300/4 to-orange-300/6 rounded-full blur-3xl will-change-transform"
-          />
-        </div>
+      <div className="min-h-screen relative overflow-hidden bg-background" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+        <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab as (tab: "everything" | "spaces" | "serendipity") => void} />
 
         <Sidebar />
 
-        <main className="ml-16 p-4 relative z-10">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+        <main className="ml-14 pt-16 px-8 relative z-10">
+          <div className="max-w-6xl">
+            {/* Search Header */}
+            <div className="mb-8 pt-4">
               <SearchInput searchQuery={searchQuery} onSearchChange={handleSearchChange} />
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-slate-600">
-                  {user?.email}
-                </span>
-                <Button
-                  onClick={logout}
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-500 hover:text-orange-600 flex items-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </Button>
-              </div>
             </div>
 
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 25,
-              duration: 0.3,
-            }}
-            className="mb-8"
-          >
-            <Button
-              onClick={() => setIsModalOpen(true)}
-              className="glass-card rounded-2xl px-6 text-orange-700 hover:text-orange-800 border-0 shadow-lg hover:shadow-xl transition-all duration-300 ease-out py-3"
-              variant="ghost"
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              New Note
-            </Button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: 0.2,
-              duration: 0.6,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            <AnimatePresence mode="popLayout">
-              {getCurrentViewNotes.map((note, index) => (
-                <NoteCard
-                  key={note.id}
-                  note={note}
-                  index={index}
-                  onNoteClick={handleNoteClick}
-                  onEditNote={handleEditNote}
-                  onDeleteNote={handleDeleteNote}
-                  parsedContent={parseMarkdown(note.content)}
-                  onEditDrawing={handleEditDrawing}
-                />
-              ))}
-            </AnimatePresence>
-          </motion.div>
-
-          {getCurrentViewNotes.length === 0 && notes.length === 0 && (
+            {/* Notes Grid */}
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                delay: 0.5,
-                duration: 0.8,
+                delay: 0.2,
+                duration: 0.6,
                 ease: [0.25, 0.1, 0.25, 1],
               }}
-              className="text-center py-20"
+              className={notesGridClassName}
             >
-              <div className="glass-card rounded-3xl p-12 max-w-md mx-auto">
-                <h3 className="text-xl text-slate-700 mb-2">Your mind is empty</h3>
-                <p className="text-slate-600 mb-6">Start capturing your thoughts and ideas</p>
-                <Button
-                  onClick={() => setIsModalOpen(true)}
-                  className="glass-card rounded-2xl px-6 py-3 text-orange-700 hover:text-orange-800 transition-all duration-300 ease-out"
-                  variant="ghost"
+              <NextLink href="/notes/new">
+                <motion.div
+                  whileHover={{ scale: 1.005, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
+                  whileTap={{ scale: 0.995 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  className="bg-card text-card-foreground rounded-xl p-6 cursor-pointer min-h-[160px] h-full flex flex-col shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_4px_18px_rgba(0,0,0,0.45)] transition-shadow border border-border"
                 >
-                  <Plus className="w-5 h-5 mr-2" />
-                  Create your first note
-                </Button>
-              </div>
-            </motion.div>
-          )}
+                  <span 
+                    className="font-semibold tracking-widest uppercase" 
+                    style={{ color: '#E8613A', fontSize: '12px', fontFamily: '"Nunito Sans", sans-serif' }}
+                  >
+                    ADD A NEW NOTE
+                  </span>
+                  <p 
+                    className="mt-3 text-muted-foreground"
+                    style={{ fontSize: '12px', fontFamily: '"Nunito Sans", sans-serif' }}
+                  >
+                    Start typing here...
+                  </p>
+                  <div className="flex-1" />
+                </motion.div>
+              </NextLink>
 
-          {getCurrentViewNotes.length === 0 && notes.length > 0 && searchQuery && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.6,
-                ease: [0.25, 0.1, 0.25, 1],
-              }}
-              className="text-center py-20"
-            >
-              <div className="glass-card rounded-3xl p-12 max-w-md mx-auto">
-                <Search className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-xl text-slate-700 mb-2">No notes found</h3>
-                <p className="text-slate-600">Try a different search term</p>
-              </div>
+              {/* Existing Notes */}
+              <AnimatePresence mode="popLayout">
+                {getCurrentViewNotes.map((note, index) => (
+                  <NoteCard
+                    key={note.id}
+                    note={note}
+                    index={index}
+                    onNoteClick={handleNoteClick}
+                    onEditNote={handleEditNote}
+                    onDeleteNote={handleDeleteNote}
+                    parsedContent={parseMarkdown(note.content)}
+                    onEditDrawing={handleEditDrawing}
+                  />
+                ))}
+              </AnimatePresence>
             </motion.div>
-          )}
-
-          {activeTab === "spaces" && getCurrentViewNotes.length === 0 && notes.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.6,
-                ease: [0.25, 0.1, 0.25, 1],
-              }}
-              className="text-center py-20"
-            >
-              <div className="glass-card rounded-3xl p-12 max-w-md mx-auto">
-                <Tag className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-                <h3 className="text-xl text-slate-700 mb-2">No spaces created yet</h3>
-                <p className="text-slate-600">Organize your notes into colored spaces</p>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === "hmmm" && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.6,
-                ease: [0.25, 0.1, 0.25, 1],
-              }}
-              className="text-center py-20"
-            >
-              <div className="glass-card rounded-3xl p-12 max-w-md mx-auto">
-                <Sparkles className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-                <h3 className="text-xl text-slate-700 mb-2">Hmm...</h3>
-                <p className="text-slate-600">Something interesting will be here soon</p>
-              </div>
-            </motion.div>
-          )}
-        </div>
+          </div>
       </main>
 
+      {/* NoteViewer removed - clicking note opens edit page directly */}
+      {/*
       <NoteViewer
         note={viewingNote}
         parsedContent={viewingNoteContent}
@@ -622,6 +556,7 @@ export default function MyMindApp() {
         onEdit={handleEditNote}
         onEditDrawing={handleEditDrawing}
       />
+      */}
 
       <AnimatePresence>
         {isModalOpen && (
@@ -655,6 +590,12 @@ export default function MyMindApp() {
         onClose={handleCloseDrawingModal}
         onSave={handleSaveDrawing}
         initialData={isEditingExistingDrawing ? editingDrawingData : undefined}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={noteToDelete !== null}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
       />
       </div>
     </ProtectedRoute>

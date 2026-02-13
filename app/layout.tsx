@@ -4,7 +4,7 @@ import { Providers } from "./providers"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "My Mind - Personal Notes",
+  title: "Clarify",
   description: "A minimal Medium-like personal notes app",
   generator: "v0.app",
 }
@@ -24,7 +24,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-serif italic antialiased">
+      <body className="font-serif antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>
