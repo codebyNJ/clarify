@@ -62,7 +62,7 @@ const NoteViewer = React.memo<NoteViewerProps>(({
             elements.push(
               <div
                 key={`text-${i}`}
-                className="text-slate-700 leading-relaxed text-lg font-sans mb-6"
+                className="text-foreground/80 leading-relaxed text-lg font-sans mb-6"
                 dangerouslySetInnerHTML={{ __html: formattedContent }}
               />
             )
@@ -70,23 +70,23 @@ const NoteViewer = React.memo<NoteViewerProps>(({
             console.error('Markdown parsing error in viewer:', error)
             // Fallback to simple formatting
             const fallbackContent = textContent
-              .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-slate-800">$1</strong>')
-              .replace(/\*(.*?)\*/g, '<em class="italic text-slate-700">$1</em>')
-              .replace(/`([^`]+)`/g, '<code class="bg-slate-200/70 px-2 py-1 rounded text-sm font-mono text-slate-800 border">$1</code>')
-              .replace(/^#{3}\s+(.+)$/gm, '<h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">$1</h3>')
-              .replace(/^#{2}\s+(.+)$/gm, '<h2 class="text-2xl font-bold text-slate-800 mt-8 mb-4">$1</h2>')
-              .replace(/^#{1}\s+(.+)$/gm, '<h1 class="text-3xl font-bold text-slate-800 mt-8 mb-6">$1</h1>')
-              .replace(/\n\n/g, '</p><p class="mb-4 leading-relaxed text-slate-700">')
+              .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
+              .replace(/\*(.*?)\*/g, '<em class="italic text-foreground/80">$1</em>')
+              .replace(/`([^`]+)`/g, '<code class="bg-muted px-2 py-1 rounded text-sm font-mono text-foreground border">$1</code>')
+              .replace(/^#{3}\s+(.+)$/gm, '<h3 class="text-xl font-semibold text-foreground mt-6 mb-3">$1</h3>')
+              .replace(/^#{2}\s+(.+)$/gm, '<h2 class="text-2xl font-bold text-foreground mt-8 mb-4">$1</h2>')
+              .replace(/^#{1}\s+(.+)$/gm, '<h1 class="text-3xl font-bold text-foreground mt-8 mb-6">$1</h1>')
+              .replace(/\n\n/g, '</p><p class="mb-4 leading-relaxed text-foreground/80">')
               .replace(/\n/g, '<br />')
             
             const wrappedContent = fallbackContent.includes('<h') 
               ? fallbackContent 
-              : `<p class="mb-4 leading-relaxed text-slate-700">${fallbackContent}</p>`
+              : `<p class="mb-4 leading-relaxed text-foreground/80">${fallbackContent}</p>`
             
             elements.push(
               <div
                 key={`text-${i}`}
-                className="text-slate-700 leading-relaxed text-lg font-sans mb-6"
+                className="text-foreground/80 leading-relaxed text-lg font-sans mb-6"
                 dangerouslySetInnerHTML={{ __html: wrappedContent }}
               />
             )
@@ -181,17 +181,17 @@ const NoteViewer = React.memo<NoteViewerProps>(({
                 stiffness: 400,
                 damping: 30,
               }}
-              className="bg-white/95 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-10 w-full max-w-5xl max-h-[90vh] overflow-y-auto relative"
+              className="bg-background/95 backdrop-blur-xl border border-border shadow-2xl rounded-3xl p-10 w-full max-w-5xl max-h-[90vh] overflow-y-auto relative"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-3xl font-medium text-slate-800 pr-8">{note.title}</h2>
+                <h2 className="text-3xl font-medium text-foreground pr-8">{note.title}</h2>
                 <div className="flex items-center space-x-2 flex-shrink-0">
                   <Button
                     onClick={() => onEdit(note)}
                     variant="ghost"
                     size="sm"
-                    className="text-slate-400 hover:text-orange-600"
+                    className="text-muted-foreground hover:text-orange-600"
                   >
                     <Edit3 className="w-5 h-5" />
                   </Button>
@@ -199,7 +199,7 @@ const NoteViewer = React.memo<NoteViewerProps>(({
                     onClick={handleClose} 
                     variant="ghost" 
                     size="sm" 
-                    className="text-slate-400 hover:text-orange-600"
+                    className="text-muted-foreground hover:text-orange-600"
                   >
                     <X className="w-5 h-5" />
                   </Button>
@@ -210,11 +210,11 @@ const NoteViewer = React.memo<NoteViewerProps>(({
                 {renderedContent.length > 0 ? (
                   renderedContent
                 ) : (
-                  <p className="text-slate-400 italic">No content available</p>
+                  <p className="text-muted-foreground italic">No content available</p>
                 )}
               </div>
               
-              <div className="text-sm text-amber-600 mt-8 pt-6 border-t border-slate-200">
+              <div className="text-sm text-amber-600 dark:text-amber-400 mt-8 pt-6 border-t border-border">
                 Created on {note.createdAt.toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',

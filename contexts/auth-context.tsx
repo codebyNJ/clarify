@@ -1,8 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react"
-import { auth } from "@/lib/firebase"
-import { User as FirebaseUser } from "firebase/auth"
+import { createContext, useContext, ReactNode } from "react"
 
 interface User {
   uid: string
@@ -16,35 +14,23 @@ interface AuthContextType {
   logout: () => Promise<void>
 }
 
+// Mock user for development without authentication
+const mockUser: User = {
+  uid: "local-user",
+  email: "user@local.dev",
+  displayName: "Local User",
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser: FirebaseUser | null) => {
-      if (firebaseUser) {
-        setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-        })
-      } else {
-        setUser(null)
-      }
-      setLoading(false)
-    })
-
-    return unsubscribe
-  }, [])
+  // Always provide mock user - no authentication
+  const user = mockUser
+  const loading = false
 
   const logout = async () => {
-    try {
-      await auth.signOut()
-    } catch (error) {
-      console.error("Error logging out:", error)
-    }
+    // No-op since there's no real authentication
+    console.log("Logout called (no-op in dev mode)")
   }
 
   return (

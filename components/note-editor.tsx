@@ -372,44 +372,53 @@ const NoteEditor = React.memo<NoteEditorProps>(
               damping: 35,
               mass: 0.8,
             }}
-            className="glass-modal rounded-3xl p-10 w-full max-w-6xl max-h-[90vh] overflow-y-auto relative"
+            className="glass-modal rounded-3xl px-6 py-6 sm:px-10 sm:py-10 w-full max-w-md sm:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-8">
-              <motion.h2
-                initial={{ x: -10, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.02, duration: 0.12 }}
-                className="text-3xl font-medium text-slate-800"
+            <div className="flex items-center justify-between mb-6">
+              <motion.div
+                whileHover={{ scale: 1.05, rotate: 90 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 600, damping: 25, mass: 0.5 }}
               >
-                {editingNote ? "Edit Note" : "New Note"}
-              </motion.h2>
-              <div className="flex items-center gap-2">
                 <Button
-                  onClick={() => setShowShortcuts(!showShortcuts)}
+                  onClick={onClose}
                   variant="ghost"
                   size="sm"
-                  className="text-slate-400 hover:text-orange-600 transition-colors duration-150"
-                  title="Show keyboard shortcuts (Ctrl+/)"
+                  className="h-9 w-9 p-0 text-slate-400 hover:text-slate-700 dark:text-muted-foreground dark:hover:text-foreground"
                 >
-                  <span className="text-sm">Shortcuts</span>
+                  <X className="w-5 h-5" />
                 </Button>
-                <motion.div
-                  whileHover={{ scale: 1.05, rotate: 90 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 600, damping: 25, mass: 0.5 }}
-                >
-                  <Button
-                    onClick={onClose}
-                    variant="ghost"
-                    size="sm"
-                    className="text-slate-400 hover:text-orange-600 transition-colors duration-150"
-                  >
-                    <X className="w-5 h-5" />
-                  </Button>
-                </motion.div>
-              </div>
+              </motion.div>
+
+              <Button
+                onClick={() => setShowShortcuts(!showShortcuts)}
+                variant="ghost"
+                size="sm"
+                className="text-xs tracking-widest uppercase text-slate-400 hover:text-slate-600 dark:text-muted-foreground dark:hover:text-foreground"
+                title="Show keyboard shortcuts (Ctrl+/)"
+              >
+                Shortcuts
+              </Button>
+
+              <Button
+                onClick={onSave}
+                disabled={isDisabled}
+                className="h-9 rounded-full px-4 bg-slate-800 hover:bg-slate-900 text-white disabled:opacity-50 dark:bg-foreground dark:text-background"
+                title="Save Note (Ctrl+S)"
+              >
+                Save
+              </Button>
             </div>
+
+            <motion.h2
+              initial={{ x: -10, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.02, duration: 0.12 }}
+              className="text-4xl sm:text-5xl font-medium text-slate-900 dark:text-foreground font-serif mb-4"
+            >
+              {editingNote ? "Edit Note" : "New Note"}
+            </motion.h2>
 
             {/* Keyboard Shortcuts Panel */}
             {showShortcuts && (
@@ -417,22 +426,22 @@ const NoteEditor = React.memo<NoteEditorProps>(
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mb-6 p-4 bg-slate-100/50 rounded-2xl border border-slate-200"
+                className="mb-6 p-4 bg-slate-100/50 dark:bg-muted/20 rounded-2xl border border-slate-200 dark:border-border"
               >
-                <h3 className="text-lg font-medium text-slate-700 mb-3">Keyboard Shortcuts</h3>
+                <h3 className="text-lg font-medium text-slate-700 dark:text-foreground mb-3">Keyboard Shortcuts</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm">
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+B</kbd> Bold</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+I</kbd> Italic</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+`</kbd> Code</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+Shift+1</kbd> Heading 1</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+Shift+2</kbd> Heading 2</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+Shift+3</kbd> Heading 3</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+Shift+Q</kbd> Quote</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+Shift+U</kbd> Bullet List</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+Shift+O</kbd> Numbered List</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+Shift+D</kbd> Add Drawing</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Ctrl+S</kbd> Save Note</div>
-                  <div><kbd className="px-2 py-1 bg-white rounded border text-xs">Esc</kbd> Close</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+B</kbd> Bold</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+I</kbd> Italic</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+`</kbd> Code</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+Shift+1</kbd> Heading 1</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+Shift+2</kbd> Heading 2</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+Shift+3</kbd> Heading 3</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+Shift+Q</kbd> Quote</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+Shift+U</kbd> Bullet List</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+Shift+O</kbd> Numbered List</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+Shift+D</kbd> Add Drawing</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Ctrl+S</kbd> Save Note</div>
+                  <div><kbd className="px-2 py-1 bg-white dark:bg-background rounded border text-xs dark:border-border dark:text-foreground">Esc</kbd> Close</div>
                 </div>
               </motion.div>
             )}
@@ -441,81 +450,90 @@ const NoteEditor = React.memo<NoteEditorProps>(
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.05, duration: 0.12 }}
-              className="space-y-8"
+              className="space-y-6"
             >
               <Input
                 type="text"
                 placeholder="Note title..."
                 value={newNote.title}
                 onChange={(e) => onTitleChange(e.target.value)}
-                className="text-2xl font-medium bg-transparent border-0 border-b border-slate-200 rounded-none px-0 py-4 focus:border-orange-400 focus:ring-0 focus:ring-offset-0 text-slate-800 transition-colors duration-200 font-sans not-italic"
+                className="text-xl bg-transparent border-0 border-b border-slate-200 dark:border-border rounded-none px-0 py-3 focus:border-slate-400 dark:focus:border-foreground/40 focus:ring-0 focus:ring-offset-0 text-slate-700 dark:text-foreground placeholder:text-slate-300 dark:placeholder:text-muted-foreground transition-colors duration-200 font-sans not-italic"
               />
 
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                <div className="relative">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-medium text-slate-700">Write</h3>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        onClick={insertDrawingAtCursor}
-                        variant="ghost"
-                        size="sm"
-                        className="text-slate-500 hover:text-orange-600 flex items-center gap-2"
-                        title="Add Drawing (Ctrl+Shift+D)"
-                      >
-                        <PenTool className="w-4 h-4" />
-                        Drawing
-                      </Button>
-                    </div>
-                  </div>
+              <div className="flex items-center justify-between pt-2">
+                <div className="flex items-center gap-6">
+                  <button type="button" className="text-sm font-medium text-slate-900 dark:text-foreground border-b-2 border-slate-900 dark:border-foreground pb-2">Write</button>
+                  <button type="button" className="text-sm font-medium text-slate-400 dark:text-muted-foreground pb-2">Preview</button>
+                </div>
+                <Button
+                  onClick={insertDrawingAtCursor}
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-500 hover:text-slate-900 dark:text-muted-foreground dark:hover:text-foreground flex items-center gap-2"
+                  title="Add Drawing (Ctrl+Shift+D)"
+                >
+                  <PenTool className="w-4 h-4" />
+                  Drawing
+                </Button>
+              </div>
 
+              <div className="rounded-2xl border border-slate-200 dark:border-border bg-white/60 dark:bg-card/20 overflow-hidden">
+                <div className="px-4 pt-4">
+                  
                   {/* Format Toolbar */}
-                  <div className="flex flex-wrap gap-1 mb-3 p-2 bg-slate-50/50 rounded-xl border border-slate-200">
+                  <div className="flex flex-wrap gap-1 p-2 rounded-2xl border border-slate-200 dark:border-border bg-white/60 dark:bg-muted/10">
                     {formatButtons.map((button, index) => (
                       <Button
                         key={index}
                         onClick={button.action}
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 hover:bg-orange-100 hover:text-orange-600"
+                        className="h-9 w-9 p-0 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-muted-foreground dark:hover:text-foreground dark:hover:bg-muted"
                         title={`${button.label} (${button.shortcut})`}
                       >
                         <button.icon className="w-4 h-4" />
                       </Button>
                     ))}
                   </div>
-                  
+
+                </div>
+
+                <div className="relative px-4 pb-4 pt-4">
                   <Textarea
                     ref={textareaRef}
                     placeholder="Start writing your thoughts... Use keyboard shortcuts for quick formatting!"
                     value={newNote.content}
                     onChange={onContentChange}
-                    className="h-[400px] max-h-[400px] bg-transparent border border-slate-200 rounded-2xl resize-none text-lg leading-relaxed focus:ring-0 focus:ring-offset-0 p-6 text-slate-700 placeholder:text-slate-400 font-sans focus:border-orange-400 transition-colors duration-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300/50 hover:scrollbar-thumb-slate-400/70 overflow-y-auto"
+                    className="h-[360px] sm:h-[420px] bg-transparent border border-slate-200 dark:border-border rounded-2xl resize-none text-base leading-relaxed focus:ring-0 focus:ring-offset-0 p-5 text-slate-700 dark:text-foreground/80 placeholder:text-slate-300 dark:placeholder:text-muted-foreground/70 font-sans focus:border-slate-300 dark:focus:border-foreground/30 transition-colors duration-200 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300/50 hover:scrollbar-thumb-slate-400/70 overflow-y-auto"
                   />
-                </div>
 
-                <div className="relative hidden xl:block">
-                  <h3 className="text-lg font-medium text-slate-700 mb-4">Preview</h3>
-                  <div className="min-h-[400px] max-h-[400px] overflow-y-auto border border-slate-200 rounded-2xl p-6 bg-slate-50/30 preview-mode scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300/50 hover:scrollbar-thumb-slate-400/70">
-                    {newNote.title && (
-                      <h1 className="text-2xl font-bold text-slate-800 mb-6 font-sans">{newNote.title}</h1>
-                    )}
-                    {previewContent ? (
-                      <div
-                        className="text-slate-700 leading-relaxed font-sans"
-                        dangerouslySetInnerHTML={{ __html: previewContent }}
-                      />
-                    ) : (
-                      <p className="text-slate-400 italic font-sans">Start writing to see preview...</p>
-                    )}
+                  <div className="absolute bottom-7 right-7">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-background/40 border border-slate-200 dark:border-border text-[10px] tracking-widest uppercase text-slate-400 dark:text-muted-foreground">
+                      <span className="text-xs">✦</span>
+                      AI READY
+                    </div>
                   </div>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <div className="text-lg font-medium text-slate-300 dark:text-muted-foreground mb-3">Preview</div>
+                <div className="min-h-[180px] rounded-2xl border border-dashed border-slate-200/80 dark:border-border/70 bg-slate-50/20 dark:bg-muted/5 flex items-center justify-center px-6 preview-mode">
+                  {previewContent ? (
+                    <div
+                      className="w-full text-slate-700 dark:text-foreground/80 leading-relaxed font-sans"
+                      dangerouslySetInnerHTML={{ __html: previewContent }}
+                    />
+                  ) : (
+                    <p className="text-slate-200 dark:text-muted-foreground italic font-sans">Start writing to see preview...</p>
+                  )}
                 </div>
               </div>
 
               {/* Drawings Section - Show drawings embedded in content */}
               {parsedDrawings.length > 0 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-slate-700">Drawings in this note</h3>
+                  <h3 className="text-lg font-medium text-slate-700 dark:text-foreground">Drawings in this note</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {parsedDrawings.map((drawing, index) => (
                       <DrawingViewer
@@ -542,7 +560,7 @@ const NoteEditor = React.memo<NoteEditorProps>(
                 </div>
               )}
 
-              <div className="flex justify-end space-x-4 pt-6">
+              <div className="hidden sm:flex justify-end space-x-4 pt-6">
                 <motion.div
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
@@ -551,7 +569,7 @@ const NoteEditor = React.memo<NoteEditorProps>(
                   <Button
                     onClick={onClose}
                     variant="ghost"
-                    className="text-slate-500 hover:text-orange-700 px-6 py-3 transition-colors duration-150"
+                    className="text-slate-500 hover:text-orange-700 dark:text-muted-foreground dark:hover:text-foreground px-6 py-3 transition-colors duration-150"
                   >
                     Cancel
                   </Button>
