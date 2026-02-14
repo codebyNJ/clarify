@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm uninstall:*)",
+      "Bash(npx next build:*)",
+      "WebFetch(domain:tiptap.dev)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(npx gh api:*)",
+      "WebFetch(domain:api.github.com)"
+    ]
+  }
+}

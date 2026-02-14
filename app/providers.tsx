@@ -1,6 +1,5 @@
 'use client';
 
-import { RecoilRoot } from 'recoil';
 import { ReactNode } from 'react';
 import { AuthProvider } from '@/contexts/auth-context';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -8,11 +7,9 @@ import { ThemeProvider } from '@/components/theme-provider';
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem storageKey="notesio-theme">
-      <RecoilRoot>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-      </RecoilRoot>
+      <AuthProvider>
+        {children}
+      </AuthProvider>
     </ThemeProvider>
   );
 }

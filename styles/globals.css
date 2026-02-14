@@ -121,3 +121,260 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ===== Notion-style Editor ===== */
+
+/* Placeholder */
+.notion-editor p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--muted-foreground);
+  opacity: 0.4;
+  pointer-events: none;
+  height: 0;
+  font-style: italic;
+}
+
+/* Drag handle (JS-powered via DragHandle extension) */
+.drag-handle:hover {
+  background-color: var(--muted);
+  opacity: 1 !important;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Task list */
+.notion-editor ul[data-type="taskList"] {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin-left: 0;
+}
+
+.notion-editor ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.2rem 0;
+}
+
+.notion-editor ul[data-type="taskList"] li > label {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.notion-editor ul[data-type="taskList"] li > label input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--border);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.notion-editor ul[data-type="taskList"] li > label input[type="checkbox"]:hover {
+  border-color: #E8613A;
+}
+
+.notion-editor ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
+  background-color: #E8613A;
+  border-color: #E8613A;
+}
+
+.notion-editor ul[data-type="taskList"] li > label input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 0px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.notion-editor ul[data-type="taskList"] li[data-checked="true"] > div > p {
+  text-decoration: line-through;
+  color: var(--muted-foreground);
+}
+
+/* Bullet list */
+.notion-editor ul:not([data-type="taskList"]) {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.notion-editor ul:not([data-type="taskList"]) ul {
+  list-style-type: circle;
+}
+
+.notion-editor ul:not([data-type="taskList"]) ul ul {
+  list-style-type: square;
+}
+
+.notion-editor ul:not([data-type="taskList"]) li {
+  padding: 0.125rem 0;
+}
+
+.notion-editor ul:not([data-type="taskList"]) li::marker {
+  color: var(--muted-foreground);
+}
+
+/* Ordered list */
+.notion-editor ol {
+  padding-left: 1.5rem;
+  list-style-type: decimal;
+}
+
+.notion-editor ol ol {
+  list-style-type: lower-alpha;
+}
+
+.notion-editor ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.notion-editor ol li {
+  padding: 0.125rem 0;
+}
+
+.notion-editor ol li::marker {
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+
+/* Blockquote */
+.notion-editor blockquote {
+  border-left: 3px solid #E8613A;
+  padding-left: 1rem;
+  margin-left: 0;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* Code block */
+.notion-editor pre {
+  background-color: var(--muted);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.notion-editor pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* Inline code */
+.notion-editor :not(pre) > code {
+  background-color: var(--muted);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+/* Horizontal rule */
+.notion-editor hr {
+  border: none;
+  border-top: 2px solid var(--border);
+  margin: 1.5rem 0;
+}
+
+/* Images */
+.notion-editor img {
+  border-radius: 0.5rem;
+  max-width: 100%;
+  margin: 1rem 0;
+}
+
+/* Links */
+.notion-editor a {
+  color: #E8613A;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.notion-editor a:hover {
+  opacity: 0.8;
+}
+
+/* Highlight */
+.notion-editor mark {
+  background-color: #fef08a;
+  border-radius: 0.125rem;
+  padding: 0.0625rem 0.125rem;
+}
+
+.dark .notion-editor mark {
+  background-color: #854d0e;
+  color: #fef9c3;
+}
+
+/* Tables */
+.notion-editor table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  overflow: hidden;
+  table-layout: fixed;
+}
+
+.notion-editor th,
+.notion-editor td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  position: relative;
+  vertical-align: top;
+  min-width: 80px;
+}
+
+.notion-editor th {
+  background-color: var(--muted);
+  font-weight: 600;
+  text-align: left;
+}
+
+.notion-editor td > p,
+.notion-editor th > p {
+  margin: 0;
+}
+
+.notion-editor .selectedCell {
+  background-color: oklch(0.488 0.243 264.376 / 0.15);
+}
+
+.dark .notion-editor .selectedCell {
+  background-color: oklch(0.488 0.243 264.376 / 0.25);
+}
+
+/* Table column resize handle */
+.notion-editor .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #E8613A;
+  pointer-events: none;
+}
+
+.notion-editor .tableWrapper {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.notion-editor.resize-cursor {
+  cursor: col-resize;
+}
