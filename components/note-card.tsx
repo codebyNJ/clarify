@@ -64,7 +64,7 @@ const NoteCard = React.memo<NoteCardProps>(({
         delay: index * 0.05,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
-      className="group relative bg-card text-card-foreground rounded-lg p-5 cursor-pointer shadow-sm dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)] hover:shadow-md dark:hover:shadow-[0_4px_18px_rgba(0,0,0,0.45)] transition-all duration-300 min-h-[140px] h-full flex flex-col border border-border"
+      className="group relative bg-card text-card-foreground rounded-lg p-5 cursor-pointer shadow-sm dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)] hover:shadow-md dark:hover:shadow-[0_4px_18px_rgba(0,0,0,0.45)] transition-all duration-300 min-h-[100px] md:min-h-[140px] h-full flex flex-col border border-border"
       onClick={() => onNoteClick(note)}
     >
       {/* Action buttons */}

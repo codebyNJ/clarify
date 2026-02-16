@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { EditorLoading } from "@/components/editor-loading";
+import ProtectedRoute from "@/components/protected-route";
 
 const TestEditorV2 = dynamic(
   () =>
@@ -15,5 +16,9 @@ const TestEditorV2 = dynamic(
 );
 
 export default function NewNotePage() {
-  return <TestEditorV2 />;
+  return (
+    <ProtectedRoute>
+      <TestEditorV2 />
+    </ProtectedRoute>
+  );
 }

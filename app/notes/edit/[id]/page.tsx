@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { EditorLoading } from "@/components/editor-loading";
 import { useAuth } from "@/contexts/auth-context";
 import { getNoteById } from "@/lib/notes-service";
+import ProtectedRoute from "@/components/protected-route";
 
 const TestEditorV2 = dynamic(
   () =>
@@ -68,12 +69,14 @@ export default function EditNotePage() {
   }
 
   return (
-    <TestEditorV2
-      noteId={noteId}
-      initialTitle={note.title}
-      initialContent={note.content}
-      isEditing
-      createdAt={note.createdAt}
-    />
+    <ProtectedRoute>
+      <TestEditorV2
+        noteId={noteId}
+        initialTitle={note.title}
+        initialContent={note.content}
+        isEditing
+        createdAt={note.createdAt}
+      />
+    </ProtectedRoute>
   );
 }

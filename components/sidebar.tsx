@@ -75,7 +75,7 @@ export default function Sidebar() {
 
       transition={{ duration: 0.6, ease: "easeOut" }}
 
-      className="fixed left-0 top-0 h-full w-14 flex flex-col items-center py-6 z-10 bg-background/60 backdrop-blur-md border-r border-border"
+      className="fixed left-0 top-0 h-full w-14 hidden md:flex flex-col items-center py-6 z-10 bg-background/60 backdrop-blur-md border-r border-border"
 
     >
 

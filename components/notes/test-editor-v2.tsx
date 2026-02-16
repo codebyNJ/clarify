@@ -76,7 +76,12 @@ import {
   Superscript as SupIcon,
   Copy,
   Check,
+  CheckSquare,
+  Paperclip,
+  Pencil,
+  SquarePen,
 } from "lucide-react";
+import NextLink from "next/link";
 
 // ─────────────────────────────────────────────
 // Props
@@ -451,7 +456,7 @@ export function TestEditorV2({
         <Sidebar />
 
         {/* ── Header ── */}
-        <header className="fixed top-0 left-14 right-0 z-40 backdrop-blur-sm border-b border-[var(--editor-border)]" style={{ background: "var(--editor-bg)" }}>
+        <header className="fixed top-0 left-0 md:left-14 right-0 z-40 backdrop-blur-sm " style={{ background: "var(--editor-bg)" }}>
           <div className="relative h-12 flex items-center justify-between px-4">
             <ShadcnButton
               variant="ghost"
@@ -462,7 +467,7 @@ export function TestEditorV2({
               <ArrowLeft className="h-4 w-4" />
             </ShadcnButton>
 
-            {/* Save status — center */}
+            {/* Save status — center
             <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-xs text-muted-foreground select-none">
               {saveStatus === "saving" && (
                 <>
@@ -487,16 +492,16 @@ export function TestEditorV2({
               )}
             </div>
 
-            {/* Word count — right */}
+            Word count — right
             <div className="text-[10px] text-muted-foreground/50 select-none tabular-nums">
               {wordCount} words · {charCount} chars
-            </div>
-          </div>
+            </div> */}
+          </div> 
         </header>
 
         {/* ── Main content area ── */}
-        <main className="ml-14 pt-16 pb-20">
-          <div className="w-full px-12 lg:px-20">
+        <main className="ml-0 md:ml-14 pt-16 pb-16 md:pb-20">
+          <div className="w-full px-4 md:px-12 lg:px-20">
             {/* Title */}
             <div className="mb-0">
               <input
@@ -510,7 +515,7 @@ export function TestEditorV2({
                     editor?.chain().focus().run();
                   }
                 }}
-                className="text-[40px] font-serif italic font-normal tracking-tight bg-transparent px-2 placeholder:text-[var(--editor-placeholder)] focus:outline-none py-1 w-full overflow-visible leading-tight text-[var(--editor-text)]"
+                className="text-[28px] md:text-[40px] font-serif italic font-normal tracking-tight bg-transparent px-2 placeholder:text-[var(--editor-placeholder)] focus:outline-none py-1 w-full overflow-visible leading-tight text-[var(--editor-text)]"
               />
               <div className="h-px bg-[var(--editor-border)] mt-0.5" />
             </div>
@@ -677,6 +682,57 @@ export function TestEditorV2({
             )}
           </div>
         </main>
+
+        {/* ── Mobile floating formatting toolbar (bottom-left) ── */}
+        <div className="fixed bottom-6 left-4 z-40 md:hidden safe-area-inset-bottom">
+          <div className="flex items-center gap-0.5 px-3 py-2 rounded-full bg-[var(--editor-bubble-bg)] border border-[var(--editor-bubble-border)] shadow-2xl backdrop-blur-xl">
+            <button
+              type="button"
+              onClick={() => editor.chain().focus().toggleTaskList().run()}
+              className={`p-2.5 rounded-full transition-colors ${
+                editor.isActive("taskList") ? "text-[#E8613A] bg-[var(--editor-bubble-active)]" : "text-[var(--editor-text-muted)]"
+              }`}
+              aria-label="Checklist"
+            >
+              <CheckSquare className="w-[18px] h-[18px]" />
+            </button>
+            <button
+              type="button"
+              onClick={handleInsertImage}
+              className="p-2.5 rounded-full text-[var(--editor-text-muted)] transition-colors"
+              aria-label="Attach image"
+            >
+              <Paperclip className="w-[18px] h-[18px]" />
+            </button>
+            <button
+              type="button"
+              onClick={handleInsertDrawing}
+              className="p-2.5 rounded-full text-[var(--editor-text-muted)] transition-colors"
+              aria-label="Drawing"
+            >
+              <Pencil className="w-[18px] h-[18px]" />
+            </button>
+            <button
+              type="button"
+              onClick={handleLink}
+              className={`p-2.5 rounded-full transition-colors ${
+                editor.isActive("link") ? "text-[#E8613A] bg-[var(--editor-bubble-active)]" : "text-[var(--editor-text-muted)]"
+              }`}
+              aria-label="Insert link"
+            >
+              <LinkIcon className="w-[18px] h-[18px]" />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Mobile new note button (bottom-right) ── */}
+        <NextLink href="/notes/new" className="fixed bottom-6 right-4 z-40 md:hidden safe-area-inset-bottom">
+          <div className="flex items-center justify-center px-3 py-2 rounded-full bg-[var(--editor-bubble-bg)] border border-[var(--editor-bubble-border)] shadow-2xl backdrop-blur-xl">
+            <div className="p-2.5 rounded-full text-[#E8613A]">
+              <SquarePen className="w-[18px] h-[18px]" />
+            </div>
+          </div>
+        </NextLink>
 
         <DrawingModal
           isOpen={showDrawingModal}

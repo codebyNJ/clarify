@@ -1,11 +1,31 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Providers } from "./providers"
+import { ServiceWorkerRegistration } from "@/components/sw-registration"
+import { InstallPWA } from "@/components/install-pwa"
 import "./globals.css"
 
 export const metadata: Metadata = {
   title: "Clarify",
-  description: "A minimal Medium-like personal notes app"
+  description: "A minimal personal notes app — write, organize, and clarify your thoughts.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Clarify",
+  },
+  icons: {
+    icon: "/icons/icon-192x192.png",
+    apple: "/icons/icon-192x192.png",
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: "#121212",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({
@@ -24,7 +44,11 @@ export default function RootLayout({
         />
       </head>
       <body className="font-serif antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <InstallPWA />
+        </Providers>
+        <ServiceWorkerRegistration />
       </body>
     </html>
   )
