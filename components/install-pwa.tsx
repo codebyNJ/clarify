@@ -44,21 +44,18 @@ export function InstallPWA() {
     // Don't show if already installed
     if (isStandalone()) return;
 
-    // Don't show if not mobile
-    if (!isMobile()) return;
-
     // Don't show if recently dismissed
     const dismissed = localStorage.getItem(DISMISS_KEY);
     if (dismissed && Date.now() - Number(dismissed) < DISMISS_DURATION) return;
 
-    // iOS doesn't support beforeinstallprompt — show manual guide
-    if (isIOS()) {
+    // iOS doesn't support beforeinstallprompt — show manual guide (mobile only)
+    if (isIOS() && isMobile()) {
       // Small delay so the page loads first
       const timer = setTimeout(() => setShowIOSGuide(true), 2000);
       return () => clearTimeout(timer);
     }
 
-    // Android/Chrome — listen for the install prompt
+    // Chrome / Edge / Android — listen for the install prompt (works on both mobile & desktop)
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
