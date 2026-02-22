@@ -128,7 +128,7 @@ function DesktopNoteCard({
     .replace(/<[^>]*>/g, " ")
     .replace(/\s+/g, " ")
     .trim()
-    .substring(0, 120)
+    .substring(0, 200)
 
   return (
     <motion.div
@@ -138,12 +138,12 @@ function DesktopNoteCard({
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
       onClick={onClick}
-      className="group relative bg-card text-card-foreground rounded-lg p-4 cursor-pointer shadow-sm dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)] hover:shadow-md transition-all min-h-[100px] flex flex-col border border-border"
+      className="group relative bg-card text-card-foreground rounded-lg p-5 cursor-pointer shadow-sm dark:shadow-[0_2px_12px_rgba(0,0,0,0.35)] hover:shadow-md transition-all min-h-[160px] flex flex-col border border-border"
     >
-      <h3 className="text-sm font-medium text-foreground mb-1.5 pr-8 line-clamp-1">
+      <h3 className="text-base font-medium text-foreground mb-2 pr-8 line-clamp-1">
         {note.title || "Untitled"}
       </h3>
-      <div className="text-muted-foreground text-xs line-clamp-2 flex-1">
+      <div className="text-muted-foreground text-sm line-clamp-4 flex-1">
         {preview || "No content"}
       </div>
       <div className="text-xs text-muted-foreground/60 mt-2 pt-2 border-t border-border/50">
@@ -495,7 +495,7 @@ export default function MyMindApp() {
                   <motion.div
                     whileHover={{ scale: 1.005 }}
                     whileTap={{ scale: 0.995 }}
-                    className="bg-card text-card-foreground rounded-lg p-4 cursor-pointer min-h-[100px] flex flex-col border border-border hover:shadow-md transition-shadow"
+                    className="bg-card text-card-foreground rounded-lg p-5 cursor-pointer min-h-[160px] flex flex-col border border-border hover:shadow-md transition-shadow"
                   >
                     <span className="font-semibold tracking-widest uppercase text-[#E8613A] text-xs">
                       ADD A NEW NOTE

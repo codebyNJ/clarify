@@ -2,6 +2,34 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import DOMPurify from "dompurify";
+
+// ─────────────────────────────────────────────
+// HTML Sanitization Config
+// ─────────────────────────────────────────────
+const DOMPURIFY_CONFIG = {
+  ALLOWED_TAGS: [
+    "p", "br", "b", "i", "u", "strong", "em", "span", "div",
+    "h1", "h2", "h3", "h4", "h5", "h6",
+    "ul", "ol", "li", "blockquote", "code", "pre",
+    "a", "img", "hr", "table", "thead", "tbody", "tr", "th", "td",
+    "input", "label", "font"
+  ],
+  ALLOWED_ATTR: [
+    "href", "src", "alt", "title", "class", "style", "target", "rel",
+    "data-media-id", "data-todo-id", "data-placeholder",
+    "type", "checked", "contenteditable"
+  ],
+  ALLOW_DATA_ATTR: true,
+  ADD_ATTR: ["target"],
+  FORBID_TAGS: ["script", "iframe", "object", "embed", "form"],
+  FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover"],
+};
+
+function sanitizeHTML(html: string): string {
+  if (typeof window === "undefined") return html;
+  return DOMPurify.sanitize(html, DOMPURIFY_CONFIG);
+}
 
 // --- Custom App Components ---
 import { Button as ShadcnButton } from "@/components/ui/button";
@@ -168,10 +196,10 @@ export function SimpleEditor({
     titleRef.current = title;
   }, [title]);
 
-  // Set initial content
+  // Set initial content (sanitized)
   useEffect(() => {
     if (editorRef.current && initialContent) {
-      editorRef.current.innerHTML = initialContent;
+      editorRef.current.innerHTML = sanitizeHTML(initialContent);
       updateCounts();
     }
   }, [initialContent]);
@@ -261,10 +289,29 @@ export function SimpleEditor({
       return;
     }
 
-    // Validate URL format
+    // Security: Validate URL and block dangerous protocols
     let validUrl = linkUrl.trim();
+
+    // Block dangerous protocols (javascript:, data:, vbscript:, etc.)
+    const dangerousProtocols = /^(javascript|data|vbscript|file):/i;
+    if (dangerousProtocols.test(validUrl)) {
+      console.warn("Blocked potentially dangerous URL protocol");
+      closeLinkPopup();
+      return;
+    }
+
+    // Add https:// if no protocol specified
     if (!/^https?:\/\//i.test(validUrl)) {
       validUrl = "https://" + validUrl;
+    }
+
+    // Validate URL format
+    try {
+      new URL(validUrl);
+    } catch {
+      console.warn("Invalid URL format");
+      closeLinkPopup();
+      return;
     }
 
     // Restore selection

@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app"
+import { initializeApp, getApps } from "firebase/app"
 import { getAuth, GoogleAuthProvider } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 import { getAnalytics } from "firebase/analytics"
@@ -14,8 +14,8 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
+// Initialize Firebase (prevent multiple initializations)
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
 
 // Auth setup
 export const auth = getAuth(app)
@@ -25,6 +25,6 @@ export const googleProvider = new GoogleAuthProvider()
 export const db = getFirestore(app)
 
 // Analytics (only in browser)
-export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null
+export const analytics = typeof window !== "undefined" ? getAnalytics(app) : null
 
 export default app
