@@ -54,15 +54,17 @@
   --font-geist: "Geist", sans-serif;
   --font-nunito-sans: "Nunito Sans", sans-serif;
 
-  /* Highlight color variables — minimal pastel tones */
-  --tt-color-highlight-yellow: #fef9c3;
-  --tt-color-highlight-green: #dcfce7;
-  --tt-color-highlight-blue: #dbeafe;
-  --tt-color-highlight-pink: #fce7f3;
-  --tt-color-highlight-orange: #ffedd5;
-  --tt-color-highlight-purple: #f3e8ff;
-  --tt-color-highlight-red: #fee2e2;
-  --tt-color-highlight-gray: #f3f4f6;
+  /* Highlight color variables — muted dark tones */
+  --tt-color-highlight-charcoal: #2d2d2d;
+  --tt-color-highlight-grey: #3d3d3d;
+  --tt-color-highlight-brown: #4a3728;
+  --tt-color-highlight-rust: #6b3d2e;
+  --tt-color-highlight-olive: #4a4a28;
+  --tt-color-highlight-teal: #1e3a3a;
+  --tt-color-highlight-navy: #1e2a4a;
+  --tt-color-highlight-purple: #3a2a4a;
+  --tt-color-highlight-plum: #4a2a3a;
+  --tt-color-highlight-maroon: #4a2a2a;
 
   /* ============================================
      HYBRID RESPONSIVE SYSTEM (from landingpage)
@@ -933,13 +935,13 @@
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:hover {
-  border-color: #2383e2;
-  background-color: rgba(35, 131, 226, 0.08);
+  border-color: #E8613A;
+  background-color: rgba(232, 97, 58, 0.08);
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked {
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #E8613A;
+  border-color: #E8613A;
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked::after {
@@ -1006,7 +1008,7 @@
 }
 
 .ProseMirror img.ProseMirror-selectednode {
-  outline: 2px solid #2383e2;
+  outline: 2px solid #E8613A;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -1091,7 +1093,7 @@
   right: 0;
   top: 0;
   bottom: 0;
-  background: rgba(35, 131, 226, 0.12);
+  background: rgba(232, 97, 58, 0.12);
   pointer-events: none;
 }
 
@@ -1102,7 +1104,7 @@
   top: 0;
   bottom: -2px;
   width: 4px;
-  background-color: #2383e2;
+  background-color: #E8613A;
   pointer-events: none;
   z-index: 20;
 }
@@ -1237,24 +1239,24 @@
 
 /* Node selection (when a whole block is selected via drag handle) */
 .ProseMirror .ProseMirror-selectednode {
-  outline: 2px solid #2383e2;
+  outline: 2px solid #E8613A;
   outline-offset: -1px;
   border-radius: 4px;
 }
 
 /* Drop cursor (line that shows where the block will drop) */
 .ProseMirror-dropcursor {
-  color: #2383e2 !important;
-  border-color: #2383e2 !important;
+  color: #E8613A !important;
+  border-color: #E8613A !important;
 }
 
 /* Text selection color */
 .ProseMirror ::selection {
-  background: rgba(35, 131, 226, 0.2);
+  background: rgba(232, 97, 58, 0.2);
 }
 
 .dark .ProseMirror ::selection {
-  background: rgba(35, 131, 226, 0.35);
+  background: rgba(232, 97, 58, 0.35);
 }
 
 /* Highlight styles */

@@ -20,7 +20,8 @@ export default function SearchInput({ searchQuery, onSearchChange }: SearchInput
         placeholder="Search my mind..."
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="text-4xl md:text-5xl font-serif bg-transparent border-none outline-none placeholder:italic placeholder:text-muted-foreground/70 text-foreground/80 font-light w-full"
+        className="text-[36px] md:text-4xl lg:text-5xl font-serif bg-transparent border-none outline-none placeholder:italic placeholder:text-muted-foreground/50 text-foreground font-light w-full"
+        style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
       />
     </motion.div>
   )

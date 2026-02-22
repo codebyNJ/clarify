@@ -23,12 +23,20 @@
 
   /* Links */
   a {
-    color: var(--editor-link-color, #3b82f6);
+    color: #E8613A;
     text-decoration: underline;
 
     &:hover {
       opacity: 0.8;
     }
+  }
+
+  /* Highlighted text */
+  span[style*="background-color"],
+  font[style*="background-color"] {
+    border-radius: 3px;
+    padding: 0.1em 0.2em;
+    margin: 0 -0.1em;
   }
 
   /* Lists */
@@ -57,37 +65,37 @@
   .todo-item {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.5rem 0;
-    margin: 0.25rem 0;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    margin: 0.125rem 0;
 
     .todo-checkbox-wrapper {
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       margin-top: 2px;
-      cursor: pointer;
+      flex-shrink: 0;
 
       .todo-checkbox {
         appearance: none;
-        width: 18px;
-        height: 18px;
-        border: 2px solid var(--editor-border, #d1d5db);
-        border-radius: 4px;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--editor-text-muted, #888);
+        border-radius: 3px;
         background: transparent;
         cursor: pointer;
         transition: all 0.15s ease;
 
         &:hover {
-          border-color: var(--editor-text-muted, #9ca3af);
+          border-color: #E8613A;
         }
 
         &:checked {
-          background: #10b981;
-          border-color: #10b981;
+          background: #E8613A;
+          border-color: #E8613A;
 
           & + .todo-checkmark {
             display: block;
@@ -108,10 +116,10 @@
         &::before {
           content: "";
           position: absolute;
-          left: 3px;
+          left: 2px;
           top: 0;
           width: 4px;
-          height: 8px;
+          height: 7px;
           border: solid white;
           border-width: 0 2px 2px 0;
           transform: rotate(45deg);
@@ -122,13 +130,17 @@
     .todo-text {
       flex: 1;
       outline: none;
-      min-height: 1.5em;
-      line-height: 1.5;
+      min-height: 1.4em;
+      line-height: 1.4;
+      word-break: break-word;
     }
 
+    /* Completed state - orange strikethrough */
     &.completed .todo-text {
       text-decoration: line-through;
-      color: var(--editor-text-muted, #9ca3af);
+      text-decoration-color: #E8613A;
+      text-decoration-thickness: 2px;
+      color: var(--editor-text-muted, #888);
     }
   }
 
