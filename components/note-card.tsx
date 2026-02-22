@@ -96,7 +96,7 @@ const NoteCard = React.memo<NoteCardProps>(({
       </div>
 
       {/* Note title */}
-      <h3 className="text-sm font-serif italic text-foreground mb-2 pr-12 line-clamp-1">
+      <h3 className="text-sm text-foreground mb-2 pr-12 line-clamp-1">
         {note.title}
       </h3>
       

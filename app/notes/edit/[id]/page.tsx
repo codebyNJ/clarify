@@ -7,10 +7,10 @@ import { EditorLoading } from "@/components/editor-loading";
 import { useAuth } from "@/contexts/auth-context";
 import { getNoteById } from "@/lib/notes-service";
 
-const TestEditorV2 = dynamic(
+const SimpleEditor = dynamic(
   () =>
-    import("@/components/notes/test-editor-v2").then(
-      (mod) => mod.TestEditorV2
+    import("@/components/notes/simple-editor").then(
+      (mod) => mod.SimpleEditor
     ),
   {
     ssr: false,
@@ -68,7 +68,7 @@ export default function EditNotePage() {
   }
 
   return (
-    <TestEditorV2
+    <SimpleEditor
       noteId={noteId}
       initialTitle={note.title}
       initialContent={note.content}
