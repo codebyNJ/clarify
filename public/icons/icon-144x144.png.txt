@@ -1,0 +1,6 @@
+Placeholder for 144x144 PNG icon.
+
+Generate using:
+- https://www.pwabuilder.com/imageGenerator
+- ImageMagick: magick public/icons/icon.svg -resize 144x144 public/icons/icon-144x144.png
+- Or use any SVG to PNG converter

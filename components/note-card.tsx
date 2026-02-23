@@ -77,7 +77,7 @@ const NoteCard = React.memo<NoteCardProps>(({
             e.stopPropagation()
             onEditNote(note)
           }}
-          className="text-muted-foreground hover:text-orange-500 transition-colors duration-150 p-1 rounded hover:bg-muted"
+          className="text-muted-foreground hover:text-[#E8613A] transition-colors duration-150 p-1 rounded hover:bg-muted"
         >
           <Edit3 className="w-3.5 h-3.5" />
         </motion.button>
@@ -89,14 +89,14 @@ const NoteCard = React.memo<NoteCardProps>(({
             e.stopPropagation()
             onDeleteNote(note.id)
           }}
-          className="text-muted-foreground hover:text-red-500 transition-colors duration-150 p-1 rounded hover:bg-muted"
+          className="text-muted-foreground hover:text-[#E8613A] transition-colors duration-150 p-1 rounded hover:bg-muted"
         >
           <X className="w-3.5 h-3.5" />
         </motion.button>
       </div>
 
       {/* Note title */}
-      <h3 className="text-sm font-serif italic text-foreground mb-2 pr-12 line-clamp-1">
+      <h3 className="text-sm text-foreground mb-2 pr-12 line-clamp-1">
         {note.title}
       </h3>
       

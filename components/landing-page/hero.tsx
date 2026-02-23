@@ -33,8 +33,8 @@ export const Hero = () => {
 
   return (
     <div className="flex overflow-hidden relative flex-col gap-4 justify-center items-center pt-2 w-full h-full pb-footer-safe-area">
-      {/* Title - centered but shifted slightly left */}
-      <div className="-ml-20 sm:-ml-28 md:-ml-40 mt-16 short:mt-12 sm:mt-24 md:mt-32">
+      {/* Title - centered on mobile, shifted left on desktop */}
+      <div className="md:-ml-40 mt-0 md:mt-32">
         <motion.h1
           className="font-serif text-7xl short:text-6xl italic sm:text-8xl md:text-9xl !text-white"
         initial="hidden"
@@ -59,9 +59,9 @@ export const Hero = () => {
         </motion.h1>
       </div>
 
-      {/* Description - positioned on the right side */}
+      {/* Description - positioned on the right side (hidden on mobile) */}
       <motion.div
-        className="absolute right-10 md:right-16 lg:right-24 top-[30%] short:top-[25%] font-serif text-xl short:text-lg italic sm:text-2xl md:text-3xl lg:text-4xl !text-white max-w-[200px] md:max-w-[240px] lg:max-w-[280px] text-left"
+        className="hidden md:block absolute right-10 md:right-16 lg:right-24 top-[30%] short:top-[25%] font-serif text-xl short:text-lg italic sm:text-2xl md:text-3xl lg:text-4xl !text-white max-w-[200px] md:max-w-[240px] lg:max-w-[280px] text-left"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, ease: EASE_OUT, delay: captionDelay }}
@@ -99,6 +99,24 @@ export const Hero = () => {
             onClick={handleGetStarted}
           />
         </motion.div>
+      </motion.div>
+
+      {/* Mobile Get Started Button - positioned right below the title */}
+      <motion.div
+        className="md:hidden mt-6"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: EASE_OUT, delay: captionDelay }}
+        whileTap={{ scale: 0.97 }}
+      >
+        <InteractiveHoverButton
+          className={`${buttonVariants({ size: "default" })} w-auto px-6 py-2`}
+          text="Get Started"
+          textClassName="font-sans italic text-sm"
+          showDot={false}
+          type="button"
+          onClick={handleGetStarted}
+        />
       </motion.div>
 
       {/* Auth Modal */}

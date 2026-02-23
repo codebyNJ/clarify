@@ -54,15 +54,17 @@
   --font-geist: "Geist", sans-serif;
   --font-nunito-sans: "Nunito Sans", sans-serif;
 
-  /* Highlight color variables — minimal pastel tones */
-  --tt-color-highlight-yellow: #fef9c3;
-  --tt-color-highlight-green: #dcfce7;
-  --tt-color-highlight-blue: #dbeafe;
-  --tt-color-highlight-pink: #fce7f3;
-  --tt-color-highlight-orange: #ffedd5;
-  --tt-color-highlight-purple: #f3e8ff;
-  --tt-color-highlight-red: #fee2e2;
-  --tt-color-highlight-gray: #f3f4f6;
+  /* Highlight color variables — muted dark tones */
+  --tt-color-highlight-charcoal: #2d2d2d;
+  --tt-color-highlight-grey: #3d3d3d;
+  --tt-color-highlight-brown: #4a3728;
+  --tt-color-highlight-rust: #6b3d2e;
+  --tt-color-highlight-olive: #4a4a28;
+  --tt-color-highlight-teal: #1e3a3a;
+  --tt-color-highlight-navy: #1e2a4a;
+  --tt-color-highlight-purple: #3a2a4a;
+  --tt-color-highlight-plum: #4a2a3a;
+  --tt-color-highlight-maroon: #4a2a2a;
 
   /* ============================================
      HYBRID RESPONSIVE SYSTEM (from landingpage)
@@ -97,16 +99,16 @@
 }
 
 .dark {
-  --editor-bg: #121212;
-  --editor-text: #e0e0e0;
-  --editor-text-muted: #808080;
-  --editor-placeholder: #555555;
+  --editor-bg: #000000;
+  --editor-text: #f0f0f0;
+  --editor-text-muted: #888888;
+  --editor-placeholder: #4a4a4a;
   --editor-border: rgba(255, 255, 255, 0.08);
-  --editor-bubble-bg: rgba(30, 30, 30, 0.96);
-  --editor-bubble-border: rgba(255, 255, 255, 0.1);
+  --editor-bubble-bg: rgba(26, 26, 26, 0.98);
+  --editor-bubble-border: rgba(255, 255, 255, 0.12);
   --editor-bubble-separator: rgba(255, 255, 255, 0.1);
-  --editor-bubble-active: rgba(255, 255, 255, 0.12);
-  --editor-bubble-hover: rgba(255, 255, 255, 0.06);
+  --editor-bubble-active: rgba(232, 97, 58, 0.2);
+  --editor-bubble-hover: rgba(255, 255, 255, 0.08);
 }
 
 .clarify-landing {
@@ -290,39 +292,39 @@
 }
 
 .dark {
-  /* Notesio dark theme */
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.96 0 0);
-  --card: #1D1E28;
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.11 0.02 255);
-  --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.95 0 0);
-  --primary-foreground: oklch(0.09 0.02 255);
-  --secondary: oklch(0.16 0.02 255);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.16 0.02 255);
-  --muted-foreground: oklch(0.72 0 0);
-  --accent: oklch(0.16 0.02 255);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.22 0.015 255);
-  --input: oklch(0.16 0.02 255);
-  --ring: oklch(0.45 0.02 255);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.09 0.02 255);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.95 0 0);
-  --sidebar-accent: oklch(0.16 0.02 255);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.22 0.015 255);
-  --sidebar-ring: oklch(0.45 0.02 255);
+  /* Piano Black Theme with Orange Accents */
+  --background: #000000;
+  --foreground: #f5f5f5;
+  --card: #1a1a1a;
+  --card-foreground: #f0f0f0;
+  --popover: #0a0a0a;
+  --popover-foreground: #f0f0f0;
+  --primary: #E8613A;
+  --primary-foreground: #ffffff;
+  --secondary: #1f1f1f;
+  --secondary-foreground: #f0f0f0;
+  --muted: #262626;
+  --muted-foreground: #a0a0a0;
+  --accent: #E8613A;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #fecaca;
+  --border: #2a2a2a;
+  --input: #1a1a1a;
+  --ring: #E8613A;
+  --chart-1: #E8613A;
+  --chart-2: #10b981;
+  --chart-3: #f59e0b;
+  --chart-4: #8b5cf6;
+  --chart-5: #ec4899;
+  --sidebar: #000000;
+  --sidebar-foreground: #f0f0f0;
+  --sidebar-primary: #E8613A;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #f0f0f0;
+  --sidebar-border: #1f1f1f;
+  --sidebar-ring: #E8613A;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -933,13 +935,13 @@
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:hover {
-  border-color: #2383e2;
-  background-color: rgba(35, 131, 226, 0.08);
+  border-color: #E8613A;
+  background-color: rgba(232, 97, 58, 0.08);
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked {
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #E8613A;
+  border-color: #E8613A;
 }
 
 .ProseMirror ul[data-type="taskList"] input[type="checkbox"]:checked::after {
@@ -1006,7 +1008,7 @@
 }
 
 .ProseMirror img.ProseMirror-selectednode {
-  outline: 2px solid #2383e2;
+  outline: 2px solid #E8613A;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -1091,7 +1093,7 @@
   right: 0;
   top: 0;
   bottom: 0;
-  background: rgba(35, 131, 226, 0.12);
+  background: rgba(232, 97, 58, 0.12);
   pointer-events: none;
 }
 
@@ -1102,7 +1104,7 @@
   top: 0;
   bottom: -2px;
   width: 4px;
-  background-color: #2383e2;
+  background-color: #E8613A;
   pointer-events: none;
   z-index: 20;
 }
@@ -1237,24 +1239,24 @@
 
 /* Node selection (when a whole block is selected via drag handle) */
 .ProseMirror .ProseMirror-selectednode {
-  outline: 2px solid #2383e2;
+  outline: 2px solid #E8613A;
   outline-offset: -1px;
   border-radius: 4px;
 }
 
 /* Drop cursor (line that shows where the block will drop) */
 .ProseMirror-dropcursor {
-  color: #2383e2 !important;
-  border-color: #2383e2 !important;
+  color: #E8613A !important;
+  border-color: #E8613A !important;
 }
 
 /* Text selection color */
 .ProseMirror ::selection {
-  background: rgba(35, 131, 226, 0.2);
+  background: rgba(232, 97, 58, 0.2);
 }
 
 .dark .ProseMirror ::selection {
-  background: rgba(35, 131, 226, 0.35);
+  background: rgba(232, 97, 58, 0.35);
 }
 
 /* Highlight styles */
@@ -1388,4 +1390,34 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* ==============================================
+   NOTE CARDS DARK MODE - Mild Grey Cards
+   ============================================== */
+
+/* Notes page background - pure black */
+.dark .bg-background {
+  background: #000000 !important;
+}
+
+/* All cards in dark mode */
+.dark .bg-card {
+  background: #1a1a1a !important;
+  border-color: #2a2a2a !important;
+}
+
+.dark .bg-card:hover {
+  background: #1f1f1f !important;
+  border-color: #333333 !important;
+}
+
+/* Note card title in dark mode - orange */
+.dark .bg-card h3 {
+  color: #E8613A;
+}
+
+/* Border classes in dark mode */
+.dark .border-border {
+  border-color: #2a2a2a !important;
 }

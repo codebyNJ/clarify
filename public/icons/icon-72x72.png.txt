@@ -1,0 +1,6 @@
+Placeholder for 72x72 PNG icon.
+
+Generate using:
+- https://www.pwabuilder.com/imageGenerator
+- ImageMagick: magick public/icons/icon.svg -resize 72x72 public/icons/icon-72x72.png
+- Or use any SVG to PNG converter

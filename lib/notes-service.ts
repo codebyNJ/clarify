@@ -15,6 +15,30 @@ import {
 } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { Note, COLLECTIONS, DEFAULT_NOTE_PERMISSIONS } from "@/lib/firestore-schema"
+import DOMPurify from "dompurify"
+
+// ==================== SECURITY ====================
+
+const DOMPURIFY_CONFIG = {
+  ALLOWED_TAGS: [
+    "p", "br", "b", "i", "u", "strong", "em", "span", "div",
+    "h1", "h2", "h3", "h4", "h5", "h6",
+    "ul", "ol", "li", "blockquote", "code", "pre",
+    "a", "img", "hr", "table", "thead", "tbody", "tr", "th", "td",
+    "input", "label", "font"
+  ],
+  ALLOWED_ATTR: [
+    "href", "src", "alt", "title", "class", "style", "target", "rel",
+    "data-media-id", "data-todo-id", "type", "checked"
+  ],
+  FORBID_TAGS: ["script", "iframe", "object", "embed", "form"],
+  FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover"],
+}
+
+function sanitizeHTML(html: string): string {
+  if (typeof window === "undefined") return html
+  return DOMPurify.sanitize(html, DOMPURIFY_CONFIG)
+}
 
 // ==================== TYPES ====================
 
@@ -94,13 +118,19 @@ export async function saveNoteToFirestore(
   note: NoteData
 ): Promise<void> {
   const noteRef = doc(db, COLLECTIONS.notes(userId), note.id)
-  const contentPlainText = extractPlainText(note.content)
-  const searchKeywords = generateSearchKeywords(note.title, contentPlainText)
+
+  // Sanitize content before saving
+  const sanitizedContent = sanitizeHTML(note.content)
+  // Sanitize title (strip all HTML)
+  const sanitizedTitle = note.title.replace(/<[^>]*>/g, "").trim().slice(0, 500)
+
+  const contentPlainText = extractPlainText(sanitizedContent)
+  const searchKeywords = generateSearchKeywords(sanitizedTitle, contentPlainText)
   const firestoreNote: Partial<Note> = {
     id: note.id,
     userId,
-    title: note.title,
-    content: note.content,
+    title: sanitizedTitle,
+    content: sanitizedContent,
     contentPlainText,
     workspaceId: note.workspaceId || null,
     tags: note.tags || [],
@@ -143,7 +173,13 @@ export async function deleteNoteFromFirestore(
 export function saveDraft(note: NoteData): void {
   if (typeof window === "undefined") return
   try {
-    localStorage.setItem(LS_KEYS.DRAFT, JSON.stringify(note))
+    // Sanitize content before storing in localStorage
+    const sanitizedNote = {
+      ...note,
+      title: note.title.replace(/<[^>]*>/g, "").trim().slice(0, 500),
+      content: sanitizeHTML(note.content),
+    }
+    localStorage.setItem(LS_KEYS.DRAFT, JSON.stringify(sanitizedNote))
   } catch {
     // quota exceeded
   }
@@ -189,9 +225,15 @@ export function queuePendingNote(
   note: NoteData,
   action: "save" | "delete" = "save"
 ): void {
+  // Sanitize note data before queuing
+  const sanitizedNote = {
+    ...note,
+    title: note.title.replace(/<[^>]*>/g, "").trim().slice(0, 500),
+    content: sanitizeHTML(note.content),
+  }
   const queue = getPendingQueue()
   const filtered = queue.filter((p) => !(p.note.id === note.id && p.action === action))
-  filtered.push({ note, userId, action, queuedAt: new Date().toISOString() })
+  filtered.push({ note: sanitizedNote, userId, action, queuedAt: new Date().toISOString() })
   setPendingQueue(filtered)
 }
 
@@ -272,8 +314,10 @@ function extractPlainText(html: string): string {
   if (typeof window === "undefined") {
     return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
   }
+  // Sanitize HTML before extracting text to prevent XSS
+  const sanitized = sanitizeHTML(html)
   const div = document.createElement("div")
-  div.innerHTML = html
+  div.innerHTML = sanitized
   return div.textContent || div.innerText || ""
 }
 

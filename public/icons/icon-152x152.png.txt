@@ -1,0 +1,6 @@
+Placeholder for 152x152 PNG icon.
+
+Generate using:
+- https://www.pwabuilder.com/imageGenerator
+- ImageMagick: magick public/icons/icon.svg -resize 152x152 public/icons/icon-152x152.png
+- Or use any SVG to PNG converter

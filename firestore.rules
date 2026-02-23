@@ -2,77 +2,136 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper functions
+
+    // ==================== HELPER FUNCTIONS ====================
+
     function isAuthenticated() {
       return request.auth != null;
     }
-    
+
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
-    
+
+    // Validate string field with max length
+    function isValidString(value, maxLen) {
+      return value is string && value.size() <= maxLen;
+    }
+
+    // Validate array field with max length
+    function isValidArray(value, maxLen) {
+      return value is list && value.size() <= maxLen;
+    }
+
     function isValidUser() {
-      return isAuthenticated() && 
-             request.resource.data.uid == request.auth.uid &&
-             request.resource.data.email == request.auth.token.email;
-    }
-    
-    function isValidNote() {
       return isAuthenticated() &&
-             request.resource.data.userId == request.auth.uid &&
-             request.resource.data.title is string &&
-             request.resource.data.content is string &&
-             request.resource.data.title.size() <= 500 &&
-             request.resource.data.content.size() <= 1000000; // 1MB limit
+             request.resource.data.uid == request.auth.uid &&
+             request.resource.data.email == request.auth.token.email &&
+             isValidString(request.resource.data.displayName, 100) &&
+             isValidString(request.resource.data.email, 320);
     }
-    
-    // User profiles
+
+    function isValidNote() {
+      let data = request.resource.data;
+      return isAuthenticated() &&
+             data.userId == request.auth.uid &&
+             isValidString(data.title, 500) &&
+             isValidString(data.content, 500000) && // 500KB limit
+             isValidArray(data.tags, 50) &&
+             // Validate booleans
+             data.isPinned is bool &&
+             data.isArchived is bool &&
+             data.isFavorite is bool;
+    }
+
+    function isValidWorkspace() {
+      let data = request.resource.data;
+      return isAuthenticated() &&
+             data.userId == request.auth.uid &&
+             isValidString(data.name, 100) &&
+             isValidString(data.description, 500);
+    }
+
+    // Rate limiting helper (basic - checks timestamp)
+    function notTooFrequent() {
+      return !exists(/databases/$(database)/documents/rateLimits/$(request.auth.uid)) ||
+             resource.data.lastWrite < request.time - duration.value(1, 's');
+    }
+
+    // ==================== USER PROFILES ====================
+
     match /users/{userId} {
-      // Users can read and write their own profile
+      // Users can only read their own profile
       allow read: if isOwner(userId);
+
+      // Users can create their own profile with validation
       allow create: if isOwner(userId) && isValidUser();
-      allow update: if isOwner(userId);
-      allow delete: if false; // Prevent profile deletion via client
-      
-      // User's notes (subcollection)
+
+      // Users can update their own profile (prevent changing critical fields)
+      allow update: if isOwner(userId) &&
+                       request.resource.data.uid == resource.data.uid &&
+                       request.resource.data.email == resource.data.email &&
+                       isValidString(request.resource.data.displayName, 100);
+
+      // Prevent profile deletion via client
+      allow delete: if false;
+
+      // ==================== USER NOTES ====================
+
       match /notes/{noteId} {
         allow read: if isOwner(userId);
         allow create: if isOwner(userId) && isValidNote();
         allow update: if isOwner(userId) && isValidNote();
         allow delete: if isOwner(userId);
       }
-      
-      // User's workspaces (subcollection)
+
+      // ==================== USER WORKSPACES ====================
+
       match /workspaces/{workspaceId} {
         allow read: if isOwner(userId);
-        allow write: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidWorkspace();
+        allow update: if isOwner(userId) && isValidWorkspace();
+        allow delete: if isOwner(userId);
       }
-      
-      // User's activity log (subcollection)
+
+      // ==================== USER ACTIVITY LOGS ====================
+
       match /activity/{activityId} {
+        // Users can only read their own activity
         allow read: if isOwner(userId);
-        allow create: if isOwner(userId);
-        allow update: if false; // Activity logs are immutable
-        allow delete: if false; // Activity logs cannot be deleted
+
+        // Activity logs can only be created by owner
+        allow create: if isOwner(userId) &&
+                         request.resource.data.userId == request.auth.uid;
+
+        // Activity logs are immutable and cannot be deleted
+        allow update, delete: if false;
       }
     }
-    
-    // Shared notes (public access)
+
+    // ==================== SHARED NOTES ====================
+
     match /shared-notes/{shareId} {
       // Anyone can read public shared notes
       allow read: if resource.data.isPublic == true;
-      
-      // Only the owner can create/update shared notes
-      allow create: if isAuthenticated() && 
-                      request.resource.data.userId == request.auth.uid;
-      allow update: if isAuthenticated() && 
-                      resource.data.userId == request.auth.uid;
-      allow delete: if isAuthenticated() && 
-                      resource.data.userId == request.auth.uid;
+
+      // Only the owner can create shared notes
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidString(request.resource.data.title, 500) &&
+                       isValidString(request.resource.data.content, 500000);
+
+      // Only the owner can update their shared notes
+      allow update: if isAuthenticated() &&
+                       resource.data.userId == request.auth.uid;
+
+      // Only the owner can delete their shared notes
+      allow delete: if isAuthenticated() &&
+                       resource.data.userId == request.auth.uid;
     }
-    
-    // Deny all other access
+
+    // ==================== DENY ALL OTHER ACCESS ====================
+
     match /{document=**} {
       allow read, write: if false;
     }

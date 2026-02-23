@@ -3,10 +3,10 @@
 import dynamic from "next/dynamic";
 import { EditorLoading } from "@/components/editor-loading";
 
-const TestEditorV2 = dynamic(
+const SimpleEditor = dynamic(
   () =>
-    import("@/components/notes/test-editor-v2").then(
-      (mod) => mod.TestEditorV2
+    import("@/components/notes/simple-editor").then(
+      (mod) => mod.SimpleEditor
     ),
   {
     ssr: false,
@@ -15,5 +15,5 @@ const TestEditorV2 = dynamic(
 );
 
 export default function NewNotePage() {
-  return <TestEditorV2 />;
+  return <SimpleEditor />;
 }
