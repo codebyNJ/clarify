@@ -1,0 +1,6 @@
+Placeholder for 512x512 PNG icon.
+
+Generate using:
+- https://www.pwabuilder.com/imageGenerator
+- ImageMagick: magick public/icons/icon.svg -resize 512x512 public/icons/icon-512x512.png
+- Or use any SVG to PNG converter

@@ -1,0 +1,9 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Piano Black Background with Rounded Corners -->
+  <rect width="512" height="512" fill="#000000" rx="100"/>
+
+  <!-- Clarify Logo Triangles in Orange -->
+  <g transform="translate(130, 150) scale(6)">
+    <path fill="#E8613A" fill-rule="evenodd" d="m7.839 40.783 16.03-28.054L20 6 0 40.783h7.839Zm8.214 0H40L27.99 19.894l-4.02 7.032 3.976 6.914H20.02l-3.967 6.943Z" clip-rule="evenodd"/>
+  </g>
+</svg>

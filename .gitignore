@@ -2,7 +2,7 @@
 
 # dependencies
 /node_modules
-
+scripts/
 # next.js
 /.next/
 /out/
@@ -30,3 +30,12 @@ next-env.d.ts
 firebase-service-account*.json
 *-service-account.json
 serviceAccountKey*.json
+
+# PWA files
+**/public/sw.js
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/sw.js.map
+**/public/workbox-*.js.map
+**/public/worker-*.js.map
+public/fallback-*.js

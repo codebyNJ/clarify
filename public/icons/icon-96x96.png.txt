@@ -1,0 +1,6 @@
+Placeholder for 96x96 PNG icon.
+
+Generate using:
+- https://www.pwabuilder.com/imageGenerator
+- ImageMagick: magick public/icons/icon.svg -resize 96x96 public/icons/icon-96x96.png
+- Or use any SVG to PNG converter
