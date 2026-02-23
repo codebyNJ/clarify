@@ -188,8 +188,5 @@ export default withPWA({
       },
     },
   ],
-  fallbacks: {
-    document: "/offline",
-  },
   buildExcludes: [/middleware-manifest\.json$/],
 })(nextConfig);
